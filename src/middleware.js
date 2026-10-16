@@ -1,0 +1,15 @@
+import { NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
+
+// Protected routes: product details + profile
+export function middleware(req) {
+  if (!getSessionCookie(req)) {
+    const url = new URL("/signin", req.url);
+    url.searchParams.set("redirect", req.nextUrl.pathname);
+    url.searchParams.set("protected", "1");
+    return NextResponse.redirect(url);
+  }
+  return NextResponse.next();
+}
+
+export const config = { matcher: ["/product/:path*", "/profile/:path*"] };
